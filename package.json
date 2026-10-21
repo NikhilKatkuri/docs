@@ -1,0 +1,57 @@
+{
+    "name": "docs",
+    "version": "1.0.0",
+    "keywords": [
+        "monorepo",
+        "turborepo",
+        "pnpm",
+        "docs",
+        "typescript"
+    ],
+    "author": "Katkuri Nikhil <https://github.com/nikhilKatkuri>",
+    "license": "ISC",
+    "homepage": "https://github.com/nikhilKatkuri/docs#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nikhilKatkuri/docs.git"
+    },
+    "bugs": {
+        "url": "https://github.com/nikhilKatkuri/docs/issues"
+    },
+    "devEngines": {
+        "packageManager": {
+            "name": "pnpm",
+            "version": "^12.14.0",
+            "onFail": "download"
+        }
+    },
+    "type": "module",
+    "devDependencies": {
+        "@eslint/css": "^2.0.1",
+        "@eslint/js": "^10.0.1",
+        "@eslint/json": "^2.1.1",
+        "@eslint/markdown": "^8.0.3",
+        "eslint": "^10.13.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-react": "^7.37.5",
+        "globals": "^17.13.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^17.6.0",
+        "prettier": "^3.9.10",
+        "prettier-plugin-tailwindcss": "^0.8.1",
+        "turbo": "^2.11.9",
+        "typescript-eslint": "^8.72.0"
+    },
+    "scripts": {
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "check-types": "turbo run check-types",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "lint-staged": "lint-staged"
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx,json,md}": "prettier --write"
+    }
+}

@@ -2,8 +2,10 @@ packages:
     - apps/*
     - packages/*
 allowBuilds:
+    '@firebase/util': false
     '@prisma/engines': false
     esbuild: false
     prisma: false
+    protobufjs: false
     unrs-resolver: false
     workerd: false

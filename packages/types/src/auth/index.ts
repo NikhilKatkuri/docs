@@ -2,7 +2,7 @@ import { AuditFeilds } from '../common';
 
 type authProvider = 'google' | 'password' | 'microsoft';
 
-interface UserSnap extends AuditFeilds {
+interface UserSnap {
     uid: string;
     email: string;
     displayName: string;
@@ -10,4 +10,5 @@ interface UserSnap extends AuditFeilds {
     provider: authProvider;
 }
 
-export type { authProvider, UserSnap };
+interface UserDoc extends UserSnap, AuditFeilds {}
+export type { authProvider, UserSnap, UserDoc };

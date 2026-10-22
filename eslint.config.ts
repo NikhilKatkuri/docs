@@ -7,13 +7,22 @@ import markdown from '@eslint/markdown';
 import css from '@eslint/css';
 import { defineConfig } from 'eslint/config';
 import prettier from 'eslint-config-prettier/flat';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const tsconfigRootDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig([
     {
         files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         plugins: { js },
         extends: ['js/recommended'],
-        languageOptions: { globals: { ...globals.browser, ...globals.node } },
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            parserOptions: {
+                tsconfigRootDir,
+            },
+        },
     },
     tseslint.configs.recommended,
     pluginReact.configs.flat.recommended,

@@ -1,2 +1,2 @@
 include:
-  - path: ./docker/postgres.yml
+    - path: ./docker/postgres.yml

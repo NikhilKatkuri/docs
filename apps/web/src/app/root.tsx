@@ -47,7 +47,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 />
                 <Meta />
                 <Links />
-                <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link
+                    rel="preconnect"
+                    href="https://fonts.gstatic.com"
+                    crossOrigin="anonymous"
+                />
+                <link
+                    rel="stylesheet"
+                    href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap"
+                />
+                <link rel="icon" type="image/svg+xml" href="/logo.svg" />
             </head>
             <body>
                 {children}

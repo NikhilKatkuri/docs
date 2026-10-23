@@ -1,12 +1,5 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import PageLoader from '../../components/ui/PageLoader';
 
 export default function Page() {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        navigate('/auth', { replace: true });
-    }, [navigate]);
-
-    return null;
+    return <PageLoader />;
 }

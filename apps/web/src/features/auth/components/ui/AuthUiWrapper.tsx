@@ -7,7 +7,7 @@ const AuthUiWrapper = ({
     mode = 'sign-in',
 }: {
     children: React.ReactNode;
-    mode?: 'sign-in' | 'sign-up';
+    mode?: 'sign-in' | 'sign-up' | 'reset-password';
 }) => {
     return (
         <div className="flex items-center flex-col justify-center flex-1 h-full ">

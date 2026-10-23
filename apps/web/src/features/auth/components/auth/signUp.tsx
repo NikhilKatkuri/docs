@@ -14,17 +14,37 @@ const SignUpForm = () => {
                     className="px-5 py-3.5"
                 />
             </div>
-
             <div className="w-full">
-                <PasswordInput
-                    placeholder="password"
+                <TextInput
+                    type="text"
+                    placeholder="your name"
                     shape="rounded"
                     variant="bordered"
                     className="px-5 py-3.5"
                 />
             </div>
 
-            <button className="w-full bg-sky/80 clickable hover:bg-sky smooth-300 p-3 rounded-full">
+            <div className="w-full">
+                <PasswordInput
+                    placeholder="Create password"
+                    shape="rounded"
+                    variant="bordered"
+                    className="px-5 py-3.5"
+                />
+            </div>
+            <div className="w-full">
+                <PasswordInput
+                    placeholder="Confirm password"
+                    shape="rounded"
+                    variant="bordered"
+                    className="px-5 py-3.5"
+                />
+            </div>
+
+            <button
+                type="button"
+                className="w-full bg-sky/80 clickable hover:bg-sky smooth-300 p-3 rounded-full"
+            >
                 <p className="">Continue</p>
             </button>
             <div className="text-center my-5">

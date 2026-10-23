@@ -1,14 +1,14 @@
 import { AuditFeilds } from '../common';
 
-type authProvider = 'google' | 'password' | 'microsoft';
+type AuthProvider = 'google' | 'password' | 'github';
 
 interface UserSnap {
     uid: string;
     email: string;
     displayName: string;
     avatarUrl: string;
-    provider: authProvider;
+    provider: AuthProvider;
 }
 
 interface UserDoc extends UserSnap, AuditFeilds {}
-export type { authProvider, UserSnap, UserDoc };
+export type { AuthProvider, UserSnap, UserDoc };

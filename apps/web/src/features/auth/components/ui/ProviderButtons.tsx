@@ -1,10 +1,26 @@
+import {
+    signInOrSignUpWithGithub,
+    signInOrSignUpWithGoogle,
+} from '../../../../lib/firebase';
+import { useAuth } from '../../provider/AuthProvider';
+
+const providerMethods = {
+    google: signInOrSignUpWithGoogle,
+    github: signInOrSignUpWithGithub,
+};
+
+type Provider = keyof typeof providerMethods;
+
 const ProviderButtons = () => {
+    const { makeAuth } = useAuth();
     return (
         <div className="flex flex-col gap-3 w-full">
-            {['google', 'github'].map((provider) => {
+            {(Object.keys(providerMethods) as Provider[]).map((provider) => {
                 return (
                     <button
+                        type="button"
                         key={provider}
+                        onClick={() => makeAuth(providerMethods[provider])}
                         className="flex items-center p-3 justify-center gap-3 rounded-full bg-surface-primary hover:bg-bg-secondary smooth-300 clickable w-full  "
                     >
                         <img

@@ -1,4 +1,4 @@
-import app from '.';
+import app from './app';
 import type { UserSnap } from '@docs/types';
 
 import {
@@ -10,6 +10,7 @@ import {
     type UserCredential,
     signInWithRedirect,
     getAdditionalUserInfo,
+    onAuthStateChanged,
 } from 'firebase/auth';
 import { generateRandomAvatarUrl } from '../utils';
 import { AuthError, cancelledCodes, toAuthError } from './errors';
@@ -19,7 +20,7 @@ const auth = getAuth(app);
 
 async function buildAuthResults(
     userCredential: UserCredential,
-    provider: 'google' | 'password',
+    provider: 'google' | 'password' | 'github',
     isNewUser: boolean = false
 ) {
     const { user } = userCredential;
@@ -50,6 +51,8 @@ async function buildAuthResults(
     };
 }
 
+type ProviderAuthResult = ReturnType<typeof buildAuthResults>;
+
 async function signInWithPassword(email: string, password: string) {
     try {
         const userCredential = (await signInWithEmailAndPassword(
@@ -65,7 +68,7 @@ async function signInWithPassword(email: string, password: string) {
     }
 }
 
-async function signUpWithEmailAndPassword(email: string, password: string) {
+async function signUpWithPassword(email: string, password: string) {
     try {
         const userCredential = (await createUserWithEmailAndPassword(
             auth,
@@ -80,7 +83,7 @@ async function signUpWithEmailAndPassword(email: string, password: string) {
     }
 }
 
-async function signInOrSignUpWithGoogle() {
+async function signInOrSignUpWithGoogle(): Promise<ProviderAuthResult | null> {
     const provider = new GoogleAuthProvider();
     try {
         const userCredentials = (await signInWithPopup(
@@ -106,15 +109,31 @@ async function signInOrSignUpWithGoogle() {
             await signInWithRedirect(auth, provider);
             return null;
         }
+
+        return null;
     }
 }
 
 async function signOut() {}
 
+async function signInOrSignUpWithGithub(): Promise<ProviderAuthResult | null> {
+    return {} as Promise<ProviderAuthResult | null>;
+}
+
+type AuthStateChangedArgs = Parameters<typeof onAuthStateChanged>;
+
+const subscribeToAuthState = (observer: AuthStateChangedArgs[1]) =>
+    onAuthStateChanged(auth, observer);
+
+export { type ProviderAuthResult };
+
 export {
     auth,
     signInWithPassword,
-    signUpWithEmailAndPassword,
+    signUpWithPassword,
     signInOrSignUpWithGoogle,
+    signInOrSignUpWithGithub,
     signOut,
+    buildAuthResults,
+    subscribeToAuthState,
 };

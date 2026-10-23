@@ -1,3 +1,5 @@
+import { AuthProvider, useAuth } from '../features/auth/provider/AuthProvider';
+import RouterGuardProvider from '../features/auth/provider/RouterGuard';
 import './global.css';
 
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
@@ -36,6 +38,19 @@ export function meta() {
     ];
 }
 
+function Route({ children }: { children: React.ReactNode }) {
+    const { isAuthenticated, authReady } = useAuth();
+
+    return (
+        <RouterGuardProvider
+            isAuthenticated={isAuthenticated}
+            loading={!authReady}
+        >
+            {children}
+        </RouterGuardProvider>
+    );
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
@@ -60,7 +75,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <link rel="icon" type="image/svg+xml" href="/logo.svg" />
             </head>
             <body>
-                {children}
+                <AuthProvider>
+                    <Route>{children}</Route>
+                </AuthProvider>
                 <ScrollRestoration />
                 <Scripts />
             </body>

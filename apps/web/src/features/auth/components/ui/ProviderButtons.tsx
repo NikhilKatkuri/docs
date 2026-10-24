@@ -11,7 +11,7 @@ const providerMethods = {
 
 type Provider = keyof typeof providerMethods;
 
-const ProviderButtons = () => {
+const ProviderButtons = ({ isSignUp = false }: { isSignUp?: boolean }) => {
     const { makeAuth } = useAuth();
     return (
         <div className="flex flex-col gap-3 w-full">
@@ -20,7 +20,11 @@ const ProviderButtons = () => {
                     <button
                         type="button"
                         key={provider}
-                        onClick={() => makeAuth(providerMethods[provider])}
+                        onClick={() =>
+                            makeAuth(
+                                providerMethods[provider].bind(null, isSignUp)
+                            )
+                        }
                         className="flex items-center p-3 justify-center gap-3 rounded-full bg-surface-primary hover:bg-bg-secondary smooth-300 clickable w-full  "
                     >
                         <img

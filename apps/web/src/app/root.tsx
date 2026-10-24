@@ -4,6 +4,8 @@ import RouterGuardProvider from '../features/auth/provider/RouterGuard';
 import './global.css';
 
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import { useEffect } from 'react';
+import { processApiQueue } from '@/lib/db/apiQueueWorker';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function meta() {
@@ -41,6 +43,17 @@ export function meta() {
 
 function Route({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, authReady } = useAuth();
+    useEffect(() => {
+        void processApiQueue();
+
+        const handleOnline = () => void processApiQueue();
+
+        window.addEventListener('online', handleOnline);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+        };
+    }, []);
 
     return (
         <RouterGuardProvider

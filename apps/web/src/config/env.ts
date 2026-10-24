@@ -19,6 +19,7 @@ const configVars = {
         messagingSenderId: getString('VITE_FIREBASE_MESSAGING_SENDER_ID'),
         appId: getString('VITE_FIREBASE_APP_ID'),
     },
+    serverUrl: getString('VITE_API_BASE_URL'),
 } satisfies ConfigVars;
 
 export { configVars };

@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const tsconfigRootDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig([
-    globalIgnores(['dist']),
+    globalIgnores(['dist', 'build', '.react-router']),
     {
         files: ['**/*.{ts,tsx}'],
         extends: [

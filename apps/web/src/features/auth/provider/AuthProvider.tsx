@@ -5,6 +5,7 @@ import {
 } from '../../../lib/firebase';
 import type { UserSnap } from '@docs/types';
 import { toast } from '@/components/ui/toast';
+import http from '@/api/http';
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -35,6 +36,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             type: 'error',
         });
     }, [error]);
+
+    useEffect(() => {
+        http.registerTokenGetter(() => token);
+    }, [token]);
+
+    useEffect(() => {
+        if (authReady) http.releaseSessionGate();
+    }, [authReady]);
 
     function clear() {
         setError(null);

@@ -1,6 +1,3 @@
-import { validatePassword } from 'firebase/auth';
-import { auth } from './functions';
-
 export type PasswordRequirement =
     | 'minLength'
     | 'maxLength'
@@ -17,40 +14,42 @@ export type PasswordStrengthResult =
           messages: string[];
       };
 
-export async function validatePasswordStrength(
+export function validatePasswordStrength(
     password: string
-): Promise<PasswordStrengthResult> {
-    const status = await validatePassword(auth, password);
-    if (status.isValid) return { isValid: true };
+): PasswordStrengthResult {
+    const opts = {
+        minPasswordLength: 6,
+        maxPasswordLength: 128,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireNumeric: true,
+        requireNonAlphanumeric: true,
+    } as const;
 
-    const opts = status.passwordPolicy.customStrengthOptions;
-
-    const checks: Array<[PasswordRequirement, boolean | undefined, string]> = [
+    const checks: Array<[PasswordRequirement, boolean, string]> = [
         [
             'minLength',
-            status.meetsMinPasswordLength,
+            password.length >= opts.minPasswordLength,
             `At least ${opts.minPasswordLength} characters`,
         ],
         [
             'maxLength',
-            status.meetsMaxPasswordLength,
+            password.length <= opts.maxPasswordLength,
             `At most ${opts.maxPasswordLength} characters`,
         ],
-        ['lowercase', status.containsLowercaseLetter, 'One lowercase letter'],
-        ['uppercase', status.containsUppercaseLetter, 'One uppercase letter'],
-        ['number', status.containsNumericCharacter, 'One number'],
-        [
-            'special',
-            status.containsNonAlphanumericCharacter,
-            'One special character',
-        ],
+        ['lowercase', /[a-z]/.test(password), 'One lowercase letter'],
+        ['uppercase', /[A-Z]/.test(password), 'One uppercase letter'],
+        ['number', /[0-9]/.test(password), 'One number'],
+        ['special', /[^a-zA-Z0-9]/.test(password), 'One special character'],
     ];
 
-    const unmet = checks.filter(([, met]) => met === false);
+    const unmet = checks.filter(([, met]) => !met);
 
-    return {
-        isValid: false,
-        failed: unmet.map(([req]) => req),
-        messages: unmet.map(([, , msg]) => msg),
-    };
+    return unmet.length === 0
+        ? { isValid: true }
+        : {
+              isValid: false,
+              failed: unmet.map(([req]) => req),
+              messages: unmet.map(([, , msg]) => msg),
+          };
 }

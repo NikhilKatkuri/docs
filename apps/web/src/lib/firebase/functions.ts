@@ -11,6 +11,7 @@ import {
     signInWithRedirect,
     getAdditionalUserInfo,
     onAuthStateChanged,
+    signOut,
 } from 'firebase/auth';
 import { generateRandomAvatarUrl } from '../utils';
 import { AuthError, cancelledCodes, toAuthError } from './errors';
@@ -51,7 +52,7 @@ async function buildAuthResults(
     };
 }
 
-type ProviderAuthResult = ReturnType<typeof buildAuthResults>;
+type ProviderAuthResult = Awaited<ReturnType<typeof buildAuthResults>>;
 
 async function signInWithPassword(email: string, password: string) {
     try {
@@ -64,7 +65,7 @@ async function signInWithPassword(email: string, password: string) {
         return await buildAuthResults(userCredential, 'password');
     } catch (error) {
         console.error('Error signing in with email and password:', error);
-        throw error;
+        throw toAuthError(error);
     }
 }
 
@@ -79,7 +80,7 @@ async function signUpWithPassword(email: string, password: string) {
         return await buildAuthResults(userCredential, 'password', true);
     } catch (error) {
         console.error('Error signing up with email and password:', error);
-        throw error;
+        throw toAuthError(error);
     }
 }
 
@@ -114,7 +115,7 @@ async function signInOrSignUpWithGoogle(): Promise<ProviderAuthResult | null> {
     }
 }
 
-async function signOut() {}
+const signOutUser = async () => await signOut(auth);
 
 async function signInOrSignUpWithGithub(): Promise<ProviderAuthResult | null> {
     return {} as Promise<ProviderAuthResult | null>;
@@ -133,7 +134,7 @@ export {
     signUpWithPassword,
     signInOrSignUpWithGoogle,
     signInOrSignUpWithGithub,
-    signOut,
+    signOutUser,
     buildAuthResults,
     subscribeToAuthState,
 };

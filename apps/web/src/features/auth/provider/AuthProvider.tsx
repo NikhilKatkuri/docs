@@ -1,9 +1,10 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
     subscribeToAuthState,
     type ProviderAuthResult,
 } from '../../../lib/firebase';
 import type { UserSnap } from '@docs/types';
+import { toast } from '@/components/ui/toast';
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -19,7 +20,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [authReady, setAuthReady] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
@@ -28,7 +29,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         if (!error) return;
-        console.log(error);
+        toast.add({
+            title: 'Authentication Error',
+            description: error.message,
+            type: 'error',
+        });
     }, [error]);
 
     function clear() {
@@ -36,19 +41,24 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(null);
         setToken(null);
     }
+    const authInProgress = useRef(false);
 
     const makeAuth = async (
         providerAuthFunction: () => Promise<ProviderAuthResult | null>
     ) => {
+        if (authInProgress.current) return;
+        authInProgress.current = true;
         try {
             setLoading(true);
             setError(null);
+
             const result = await providerAuthFunction();
-            if (!result) {
-                setError(new Error('Authentication failed or was cancelled.'));
-                return;
-            }
-            console.log('Authentication result:', result);
+            if (!result) return;
+            toast.add({
+                title: 'Authentication Successful',
+                description: 'You have been successfully authenticated.',
+                type: 'success',
+            });
             setUser(result.user);
             setToken(result.token);
         } catch (error) {
@@ -59,6 +69,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             );
         } finally {
             setLoading(false);
+            authInProgress.current = false;
         }
     };
 
@@ -112,6 +123,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             unsubscribe();
         };
     }, []);
+
     return (
         <AuthContext.Provider value={authContextValue}>
             {children}
@@ -119,7 +131,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-const useAuth = () => {
+const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');

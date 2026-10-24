@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toast';
 import { AuthProvider, useAuth } from '../features/auth/provider/AuthProvider';
 import RouterGuardProvider from '../features/auth/provider/RouterGuard';
 import './global.css';
@@ -80,6 +81,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </AuthProvider>
                 <ScrollRestoration />
                 <Scripts />
+                <Toaster />
             </body>
         </html>
     );

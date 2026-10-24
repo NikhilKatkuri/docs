@@ -7,7 +7,7 @@ const RouterGuardContext = createContext<null>(null);
 const PUBLIC_ROUTES = ['/auth'] as const;
 const AUTH_REDIRECT_PATH = '/docs';
 const SIGN_IN_PATH = '/auth/sign-in';
-const MIN_LOADER_MS = 2500;
+const MIN_LOADER_MS = 1000;
 
 function isPublicRoute(path: string): boolean {
     return PUBLIC_ROUTES.some(
@@ -29,7 +29,6 @@ const RouterGuardProvider = ({
 
     const [minDelayDone, setMinDelayDone] = useState(false);
 
-    // Start the 300ms timer only after auth has finished loading
     useEffect(() => {
         if (loading) return;
         const id = setTimeout(() => setMinDelayDone(true), MIN_LOADER_MS);

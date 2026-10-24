@@ -59,6 +59,11 @@ const ERROR_MAP: ErrorMap = {
         code: 'user-disabled',
         message: 'This account has been disabled.',
     },
+    // 'auth/email-already-in-use': {
+    //     code: 'account-exists',
+    //     message:
+    //         'An account already exists with this email address. Please sign in instead.',
+    // },
 };
 
 function toAuthError(error: unknown): AuthError {
@@ -69,7 +74,6 @@ function toAuthError(error: unknown): AuthError {
         if (mapped) {
             return new AuthError(mapped.code, mapped.message, { cause: error });
         }
-
         if (error.code === 'auth/account-exists-with-different-credential') {
             return new AuthError(
                 'account-exists',
@@ -82,6 +86,20 @@ function toAuthError(error: unknown): AuthError {
                 }
             );
         }
+        if (error.code === 'auth/popup-blocked') {
+            return new AuthError(
+                'popup-blocked',
+                'The popup was blocked. Please allow popups and try again.',
+                { cause: error }
+            );
+        }
+        return new AuthError(
+            error.code as unknown as AuthErrorCode,
+            error.message.match(/\(([^)]+)\)/)?.[1] ?? error.message,
+            {
+                cause: error,
+            }
+        );
     }
 
     return new AuthError(

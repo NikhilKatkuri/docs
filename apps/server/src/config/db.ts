@@ -1,5 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../../generated/prisma/client';
+import { logger } from '@/app';
 import configVars from './env';
 
 function databaseUrl(): string {
@@ -19,9 +20,11 @@ const prisma = new PrismaClient({ adapter });
 async function connectToDatabase(): Promise<void> {
     try {
         await prisma.$connect();
-        console.log('Connected to the database successfully.');
+        logger.info(
+            { event: 'database_connected' },
+            'connected to the database'
+        );
     } catch (error) {
-        console.error('Error connecting to the database:', error);
         throw new Error('Failed to connect to the database.', { cause: error });
     }
 }
@@ -29,9 +32,11 @@ async function connectToDatabase(): Promise<void> {
 async function disconnectFromDatabase(): Promise<void> {
     try {
         await prisma.$disconnect();
-        console.log('Disconnected from the database successfully.');
+        logger.info(
+            { event: 'database_disconnected' },
+            'disconnected from the database'
+        );
     } catch (error) {
-        console.error('Error disconnecting from the database:', error);
         throw new Error('Failed to disconnect from the database.', {
             cause: error,
         });

@@ -1,5 +1,6 @@
 import { z, ZodError } from 'zod';
 import type { Request, Response, NextFunction } from 'express';
+import { security } from '@/app';
 
 const validate =
     (schema: z.ZodObject<any>) =>
@@ -29,6 +30,23 @@ const validate =
                     path: issue.path.join('.') || '(root)',
                     message: issue.message,
                 }));
+
+                const fields = Array.from(
+                    new Set(
+                        error.issues.map((issue) => {
+                            const path = issue.path.map(String);
+                            const withoutRoot = [
+                                'body',
+                                'query',
+                                'params',
+                            ].includes(path[0] ?? '')
+                                ? path.slice(1)
+                                : path;
+                            return withoutRoot.join('.') || '(root)';
+                        })
+                    )
+                );
+                security.validationFailed(req, fields);
 
                 res.status(400).json({
                     success: false,

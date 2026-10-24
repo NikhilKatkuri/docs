@@ -1,6 +1,4 @@
 import type { Options } from 'express-rate-limit';
-import type { NextFunction, Request, Response } from 'express';
-import status from 'http-status-codes';
 import configVars from './env';
 
 type LimiterPreset = {
@@ -64,31 +62,6 @@ export const rateLimitConfig: Record<string, LimiterPreset> = {
         severity: 'low',
     },
 } satisfies Record<string, LimiterPreset>;
-
-export const buildRateLimitMessage = (message?: string) => ({
-    status: status.TOO_MANY_REQUESTS,
-    message: message ?? 'Too many requests, please try again later.',
-});
-
-export const buildRateLimitHandler =
-    (key: ConfigKey, preset: LimiterPreset) =>
-    (
-        req: Request,
-        res: Response,
-        _next: NextFunction,
-        options: Options
-    ): void => {
-        console.log(
-            `Rate limit exceeded for key "${key}". Severity: ${preset.severity}.`,
-            req.ip,
-            req.method,
-            req.originalUrl,
-            options
-        );
-        res.status(status.TOO_MANY_REQUESTS).json(
-            buildRateLimitMessage(preset.message)
-        );
-    };
 
 export const baseRateLimitOptions: Partial<Options> = {
     standardHeaders: 'draft-7',

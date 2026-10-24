@@ -46,6 +46,15 @@ class UserRepository {
         });
     }
 
+    /**
+     * Unfiltered lookup for authentication decisions. Needed so sign-in can
+     * distinguish a suspended/deleted account from a missing one without
+     * exposing that distinction to the client.
+     */
+    findAccountByUid(uid: string) {
+        return prisma.user.findUnique({ where: { uid } });
+    }
+
     findByEmail(email: string) {
         return prisma.user.findFirst({
             where: { email, deletedAt: null, status: 'ACTIVE' },

@@ -16,6 +16,7 @@ async function boot() {
     const onListening = () => {
         if (configVars.isDev) {
             const localIp = internalIpV4Sync();
+
             logger.info(
                 {
                     port: configVars.PORT,

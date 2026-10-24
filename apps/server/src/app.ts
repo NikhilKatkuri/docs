@@ -10,13 +10,13 @@ import {
     createSecurityLogger,
 } from 'express-secure-logger';
 
-import configVars from './config/env';
+import configVars, { loggerEnv } from './config/env';
 import router from './routes';
 import corsOptions from './config/cors';
 
 const app: express.Application = express();
 
-const config = loadLoggerConfig();
+const config = loadLoggerConfig(loggerEnv);
 const logger = createLogger(config);
 const security = createSecurityLogger(logger, { ipMode: config.ipMode });
 

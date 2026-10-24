@@ -1,5 +1,6 @@
 import type { UserSnap } from '@docs/types';
 import userRepository from '../repository/user';
+import { security } from '@/app';
 import type { Request, Response, NextFunction, RequestHandler } from 'express';
 
 function asyncHandler(
@@ -12,6 +13,7 @@ function asyncHandler(
 
 const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
     if (!req.user) {
+        security.unauthorized(req, { reason: 'missing_user_context' });
         res.status(401).json({ message: 'Unauthorized' });
         return;
     }
@@ -41,6 +43,7 @@ function safeUserData<T extends Omit<UserSnap, 'uid'>>(
 
 const updateUserProfile = asyncHandler(async (req: Request, res: Response) => {
     if (!req.user) {
+        security.unauthorized(req, { reason: 'missing_user_context' });
         res.status(401).json({ message: 'Unauthorized' });
         return;
     }
@@ -53,11 +56,14 @@ const updateUserProfile = asyncHandler(async (req: Request, res: Response) => {
 
 const deleteUserAccount = asyncHandler(async (req: Request, res: Response) => {
     if (!req.user) {
+        security.unauthorized(req, { reason: 'missing_user_context' });
         res.status(401).json({ message: 'Unauthorized' });
         return;
     }
 
     await userRepository.delete(req.user.uid);
+
+    security.accountDeleted(req, { userId: req.user.uid });
 
     res.clearCookie('session', { path: '/' });
     res.status(200).json({ message: 'Account deleted successfully' });

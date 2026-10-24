@@ -1,7 +1,7 @@
-interface AuditFeilds {
+interface AuditFields {
     createdAt: number;
     updatedAt: number;
     deletedAt?: number;
 }
 
-export type { AuditFeilds };
+export type { AuditFields };

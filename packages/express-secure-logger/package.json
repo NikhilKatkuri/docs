@@ -1,0 +1,47 @@
+{
+    "name": "express-secure-logger",
+    "version": "1.0.0",
+    "description": "Production-grade structured, privacy-aware logging for Express + TypeScript (Pino)",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint .",
+        "test": "vitest run",
+        "verify": "npm run typecheck && npm run lint && npm test && npm run build"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "pino": "^9.14.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@types/express": "^5.0.6",
+        "@types/node": "^26.6.5",
+        "@types/supertest": "^7.2.1",
+        "eslint": "^10.13.0",
+        "express": "^5.3.0",
+        "pino-pretty": "^13.2.0",
+        "supertest": "^7.3.1",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.72.0",
+        "vitest": "^5.0.5"
+    },
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "engines": {
+        "node": ">=18.17"
+    },
+    "peerDependencies": {
+        "express": "^4.17.0 || ^5.0.0",
+        "pino-pretty": ">=10"
+    },
+    "peerDependenciesMeta": {
+        "pino-pretty": {
+            "optional": true
+        }
+    }
+}

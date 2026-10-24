@@ -40,6 +40,18 @@ const configVars = {
             urls: getString('CORS_ORIGINS').split(','),
         },
     },
+    firebase: {
+        apiKey: getString('SECRET_FIREBASE_API_KEY'),
+        authDomain: getString('SECRET_FIREBASE_AUTH_DOMAIN'),
+        projectId: getString('SECRET_FIREBASE_PROJECT_ID'),
+        storageBucket: getString('SECRET_FIREBASE_STORAGE_BUCKET'),
+        messagingSenderId: getString('SECRET_FIREBASE_MESSAGING_SENDER_ID'),
+        appId: getString('SECRET_FIREBASE_APP_ID'),
+    },
+    jwt: {
+        secret: getString('JWT_SECRET'),
+        expiresIn: getString('JWT_EXPIRES_IN'),
+    },
 } satisfies ConfigVars;
 
 export default configVars;

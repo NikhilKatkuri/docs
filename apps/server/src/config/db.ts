@@ -1,15 +1,8 @@
-import pg from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../../generated/prisma/client';
 import configVars from './env';
 
-const dbClient = new pg.Client({
-    host: configVars.POSTGRES_HOST,
-    user: configVars.POSTGRES_USER,
-    password: configVars.POSTGRES_PASSWORD,
-    database: configVars.POSTGRES_DB,
-    port: configVars.POSTGRES_PORT,
-});
-
-function dbUrl(): string {
+function databaseUrl(): string {
     const {
         POSTGRES_USER,
         POSTGRES_PASSWORD,
@@ -20,14 +13,29 @@ function dbUrl(): string {
     return `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
 }
 
-async function connectToDb() {
+const adapter = new PrismaPg({ connectionString: databaseUrl() });
+const prisma = new PrismaClient({ adapter });
+
+async function connectToDatabase(): Promise<void> {
     try {
-        await dbClient.connect();
+        await prisma.$connect();
         console.log('Connected to the database successfully.');
     } catch (error) {
-        console.error('Error connecting to database:', error);
+        console.error('Error connecting to the database:', error);
+        throw new Error('Failed to connect to the database.', { cause: error });
     }
 }
 
-export { dbClient, dbUrl };
-export default connectToDb;
+async function disconnectFromDatabase(): Promise<void> {
+    try {
+        await prisma.$disconnect();
+        console.log('Disconnected from the database successfully.');
+    } catch (error) {
+        console.error('Error disconnecting from the database:', error);
+        throw new Error('Failed to disconnect from the database.', {
+            cause: error,
+        });
+    }
+}
+
+export { databaseUrl, connectToDatabase, disconnectFromDatabase, prisma };

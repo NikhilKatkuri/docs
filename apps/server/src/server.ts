@@ -1,35 +1,49 @@
-import app from './app';
-import connectToDb, { dbUrl } from './config/db';
+import { flushLogger, installProcessHandlers } from 'express-secure-logger';
+import { internalIpV4Sync } from 'internal-ip';
+import app, { logger } from './app';
+import { connectToDatabase, disconnectFromDatabase } from './config';
 import configVars from './config/env';
-import { PrismaClient } from '../generated/prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-
-const adapter = new PrismaPg({ connectionString: dbUrl() });
-const prisma = new PrismaClient({ adapter });
 
 async function boot() {
-    await connectToDb();
-    if (configVars.isDev) {
-        app.listen(configVars.PORT, configVars.HOST, () => {
-            console.log(
-                `Server is running in development mode on http://${configVars.HOST}:${configVars.PORT}`
-            );
-        });
-    } else {
-        app.listen(configVars.PORT, () => {
-            console.log(
-                `Server is running in production mode on port ${configVars.PORT}`
-            );
-        });
+    try {
+        await connectToDatabase();
+    } catch (err) {
+        logger.fatal({ err }, 'database connection failed; exiting');
+        await flushLogger(logger);
+        process.exit(1);
     }
+
+    const onListening = () => {
+        if (configVars.isDev) {
+            const localIp = internalIpV4Sync();
+            logger.info(
+                {
+                    port: configVars.PORT,
+                    url: `http://${localIp}:${configVars.PORT}`,
+                },
+                'server started (development)'
+            );
+        } else {
+            logger.info(
+                { port: configVars.PORT },
+                'server started (production)'
+            );
+        }
+    };
+
+    const server = configVars.isDev
+        ? app.listen(configVars.PORT, configVars.HOST, onListening)
+        : app.listen(configVars.PORT, onListening);
+
+    installProcessHandlers(logger, {
+        server,
+        onShutdown: disconnectFromDatabase,
+        timeoutMs: 10_000,
+    });
 }
 
-boot()
-    .then(async () => {
-        await prisma.$connect();
-    })
-    .catch(async (e) => {
-        console.error(e);
-        await prisma.$disconnect();
-        process.exit(1);
-    });
+boot().catch(async (err) => {
+    logger.fatal({ err }, 'unexpected error during boot');
+    await flushLogger(logger);
+    process.exit(1);
+});

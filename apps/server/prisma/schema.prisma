@@ -7,10 +7,27 @@ datasource db {
     provider = "postgresql"
 }
 
-model user {
-    uid         String @id @unique
-    email       String @unique
-    displayName String
-    avatarUrl   String
-    provider    String
+model User {
+    uid           String     @id
+    email         String     @unique
+    displayName   String
+    avatarUrl     String?
+    provider      String
+    emailVerified Boolean    @default(false)
+    status        UserStatus @default(ACTIVE)
+
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+    lastLoginAt  DateTime?
+    lastActiveAt DateTime?
+    deletedAt    DateTime?
+
+    @@index([lastLoginAt])
+    @@map("users")
+}
+
+enum UserStatus {
+    ACTIVE
+    SUSPENDED
+    DELETED
 }

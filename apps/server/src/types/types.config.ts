@@ -14,6 +14,18 @@ interface ConfigVars {
             urls: string[];
         };
     };
+    firebase: {
+        apiKey: string;
+        authDomain: string;
+        projectId: string;
+        storageBucket: string;
+        messagingSenderId: string;
+        appId: string;
+    };
+    jwt: {
+        secret: string;
+        expiresIn: string;
+    };
 }
 
 export type { ConfigVars };
